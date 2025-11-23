@@ -17,25 +17,17 @@ public class LobbyController {
     public List<LobbyDto> getJoinableLobbies() { return lobbyService.getJoinableLobbies(); }
 
     @PostMapping
-    public LobbyDto createLobby(@RequestBody CreateLobbyDto dto) {
-        return lobbyService.createLobby(dto);
-    }
+    public LobbyDto createLobby(@RequestBody CreateLobbyDto dto) { return lobbyService.createLobby(dto); }
 
     @DeleteMapping
     public boolean createLobby(@RequestBody DeleteLobbyDto dto) { return lobbyService.deleteLobby(dto); }
 
     @PostMapping("/join")
-    public LobbyDto joinLobby(@RequestBody JoinLobbyDto dto) {
-        return lobbyService.joinLobby(dto);
-    }
+    public LobbyDto joinLobby(@RequestBody JoinLobbyDto dto) { return lobbyService.joinLobby(dto); }
 
     @PostMapping("/leave")
-    public LobbyDto leaveLobby(@RequestBody LeaveLobbyDto dto) {
-        return lobbyService.leaveLobby(dto);
-    }
+    public LobbyDto leaveLobby(@RequestBody LeaveLobbyDto dto) { return lobbyService.leaveLobby(dto); }
 
-    @PostMapping("/{code}/start")
-    public LobbyDto startLobby(@PathVariable String code) {
-        return lobbyService.startLobby(code);
-    }
+    @PostMapping("/start")
+    public LobbyDto startLobby(@RequestBody StartLobbyDto dto) { return lobbyService.startLobby(dto); }
 }

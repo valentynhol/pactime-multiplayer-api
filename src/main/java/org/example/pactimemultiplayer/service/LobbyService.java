@@ -100,12 +100,15 @@ public class LobbyService {
         return LobbyDto.from(lobby);
     }
 
-    public LobbyDto startLobby(String code) {
-        Lobby lobby = lobbyRepository.findById(code).orElseThrow();
+    public LobbyDto startLobby(StartLobbyDto dto) {
+        Lobby lobby = lobbyRepository.findById(dto.getCode()).orElseThrow();
         lobby.setStarted(true);
         lobbyRepository.save(lobby);
 
-        lobbyWebSocketService.broadcastLobbyUpdate(code);
+        System.out.println("Debug: got map: " + dto.getGameMap());
+
+        lobbyWebSocketService.runCountdown(dto);
+
         return LobbyDto.from(lobby);
     }
 

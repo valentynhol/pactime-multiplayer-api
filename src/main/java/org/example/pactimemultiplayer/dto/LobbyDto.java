@@ -15,6 +15,7 @@ public class LobbyDto {
     private String name;
     private boolean started;
     private String mode;
+    private String modeShort;
     private Set<String> players;
 
     public static LobbyDto from(Lobby lobby) {
@@ -23,6 +24,7 @@ public class LobbyDto {
                 lobby.getName(),
                 lobby.isStarted(),
                 lobby.getMode() != null ? lobby.getMode().getName() : null,
+                lobby.getMode() != null ? lobby.getMode().getShortName() : null,
                 lobby.getPlayers().stream().map(Player::getUsername).collect(Collectors.toSet())
         );
     }
