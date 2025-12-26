@@ -20,7 +20,7 @@ public class LobbyController {
     public LobbyDto createLobby(@RequestBody CreateLobbyDto dto) { return lobbyService.createLobby(dto); }
 
     @DeleteMapping
-    public boolean createLobby(@RequestBody DeleteLobbyDto dto) { return lobbyService.deleteLobby(dto); }
+    public boolean deleteLobby(@RequestBody DeleteLobbyDto dto) { return lobbyService.deleteLobby(dto); }
 
     @PostMapping("/join")
     public LobbyDto joinLobby(@RequestBody JoinLobbyDto dto) { return lobbyService.joinLobby(dto); }
