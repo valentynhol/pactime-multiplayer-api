@@ -8,5 +8,4 @@ import lombok.*;
 public class CreateLobbyDto {
     private String name;
     private String gmShortName;
-    private String hostUsername;
 }

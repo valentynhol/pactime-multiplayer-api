@@ -10,12 +10,13 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketConfigurer {
-
     private final LobbyWebSocketHandler lobbyWebSocketHandler;
+    private final JwtWebSocketHandshakeInterceptor jwtWebSocketHandshakeInterceptor;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(lobbyWebSocketHandler, "/ws/lobbies/{code}")
+                .addInterceptors(jwtWebSocketHandshakeInterceptor)
                 .setAllowedOrigins("*");
     }
 }

@@ -6,7 +6,7 @@ plugins {
 
 group = "org.example"
 version = "0.0.1-SNAPSHOT"
-description = "Demo project for Spring Boot"
+description = "Pactime multiplayer API"
 
 java {
 	toolchain {
@@ -29,11 +29,19 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
-	compileOnly("org.projectlombok:lombok")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("com.google.api-client:google-api-client:2.6.0")
+    implementation("com.google.api-client:google-api-client-gson:2.6.0")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.5")
+    testImplementation("org.springframework.security:spring-security-test")
+    compileOnly("org.projectlombok:lombok")
 	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
 }
 
 tasks.withType<Test> {

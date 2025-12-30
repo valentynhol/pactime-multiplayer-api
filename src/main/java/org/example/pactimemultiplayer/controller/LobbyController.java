@@ -1,8 +1,12 @@
 package org.example.pactimemultiplayer.controller;
 
+import jakarta.validation.Valid;
 import org.example.pactimemultiplayer.dto.*;
+import org.example.pactimemultiplayer.entity.Player;
+import org.example.pactimemultiplayer.security.Authenticated;
 import org.example.pactimemultiplayer.service.LobbyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,17 +21,43 @@ public class LobbyController {
     public List<LobbyDto> getJoinableLobbies() { return lobbyService.getJoinableLobbies(); }
 
     @PostMapping
-    public LobbyDto createLobby(@RequestBody CreateLobbyDto dto) { return lobbyService.createLobby(dto); }
+    public LobbyDto createLobby(
+            @Valid @RequestBody CreateLobbyDto dto,
+            @Authenticated Player player
+    ) {
+        return lobbyService.createLobby(dto, player);
+    }
 
     @DeleteMapping
-    public boolean deleteLobby(@RequestBody DeleteLobbyDto dto) { return lobbyService.deleteLobby(dto); }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteLobby(
+            @Valid @RequestBody DeleteLobbyDto dto,
+            @Authenticated Player player
+    ) {
+        lobbyService.deleteLobby(dto, player);
+    }
 
     @PostMapping("/join")
-    public LobbyDto joinLobby(@RequestBody JoinLobbyDto dto) { return lobbyService.joinLobby(dto); }
+    public LobbyDto joinLobby(
+            @Valid @RequestBody JoinLobbyDto dto,
+            @Authenticated Player player
+    ) {
+        return lobbyService.joinLobby(dto, player);
+    }
 
     @PostMapping("/leave")
-    public LobbyDto leaveLobby(@RequestBody LeaveLobbyDto dto) { return lobbyService.leaveLobby(dto); }
+    public LobbyDto leaveLobby(
+            @Valid @RequestBody LeaveLobbyDto dto,
+            @Authenticated Player player
+    ) {
+        return lobbyService.leaveLobby(dto, player);
+    }
 
     @PostMapping("/start")
-    public LobbyDto startLobby(@RequestBody StartLobbyDto dto) { return lobbyService.startLobby(dto); }
+    public LobbyDto startLobby(
+            @Valid @RequestBody StartLobbyDto dto,
+            @Authenticated Player player
+    ) {
+        return lobbyService.startLobby(dto, player);
+    }
 }

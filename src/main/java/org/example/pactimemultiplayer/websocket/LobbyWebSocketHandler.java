@@ -33,8 +33,14 @@ public class LobbyWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) {
         String path = Objects.requireNonNull(session.getUri()).getPath();
         String code = path.substring(path.lastIndexOf('/') + 1);
-        String username = URLDecoder.decode(session.getUri().getQuery()
-                .replace("user=", ""), StandardCharsets.UTF_8);
+
+        String raw_uname = "";
+        for (String param : session.getUri().getQuery().split("&")) {
+            if (param.startsWith("user=")) {
+                raw_uname = param.substring(5);
+            }
+        }
+        String username = URLDecoder.decode(raw_uname, StandardCharsets.UTF_8);
 
         session.getAttributes().put("code", code);
         session.getAttributes().put("username", username);
@@ -86,7 +92,6 @@ public class LobbyWebSocketHandler extends TextWebSocketHandler {
     public void broadcastLobbyUpdate(String code) {
         Lobby lobby = lobbyRepository.findWithPlayers(code).orElseThrow();
         LobbyDto dto = LobbyDto.from(lobby);
-        System.out.println("here1: " + dto);
 
         Map<String, Object> msg = new HashMap<>();
         msg.put("type", "PLAYER_LIST_CHANGED");

@@ -18,10 +18,10 @@ public class GameFlowService {
     public void startCountdown(StartLobbyDto dto) {
         try {
             for (int i = 3; i > 0; i--) {
-                publisher.publishEvent(new LobbyCountdownEvent(dto.getCode(), i));
+                publisher.publishEvent(new LobbyCountdownEvent(dto.getLobbyCode(), i));
                 Thread.sleep(1000);
             }
-            publisher.publishEvent(new GameStartedEvent(dto.getCode(), dto.getGameMap()));
+            publisher.publishEvent(new GameStartedEvent(dto.getLobbyCode(), dto.getGameMap()));
         } catch (InterruptedException ignored) {}
     }
 }

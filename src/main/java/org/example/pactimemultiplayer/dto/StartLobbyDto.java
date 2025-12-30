@@ -6,6 +6,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StartLobbyDto {
-    private String code;
+    private String lobbyCode;
     private String gameMap;
 }
