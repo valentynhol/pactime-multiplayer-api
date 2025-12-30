@@ -3,6 +3,8 @@ package org.example.pactimemultiplayer.websocket;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.example.pactimemultiplayer.dto.LobbyDto;
 import org.example.pactimemultiplayer.entity.Lobby;
+import org.example.pactimemultiplayer.entity.Player;
+import org.example.pactimemultiplayer.exception.PlayerNotInLobbyException;
 import org.example.pactimemultiplayer.repository.LobbyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +15,9 @@ import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -34,16 +35,7 @@ public class LobbyWebSocketHandler extends TextWebSocketHandler {
         String path = Objects.requireNonNull(session.getUri()).getPath();
         String code = path.substring(path.lastIndexOf('/') + 1);
 
-        String raw_uname = "";
-        for (String param : session.getUri().getQuery().split("&")) {
-            if (param.startsWith("user=")) {
-                raw_uname = param.substring(5);
-            }
-        }
-        String username = URLDecoder.decode(raw_uname, StandardCharsets.UTF_8);
-
         session.getAttributes().put("code", code);
-        session.getAttributes().put("username", username);
 
         sessions.computeIfAbsent(code, k -> ConcurrentHashMap.newKeySet())
                 .add(session);
@@ -54,14 +46,18 @@ public class LobbyWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) {
         String code = getLobbyCode(session);
-        String username = session.getAttributes().get("username").toString();
         if (code == null) return;
-        System.out.println(username + ": session closed");
+
+        String playerId = getPlayer(session).getId();
 
         sessions.getOrDefault(code, Set.of()).remove(session);
 
-        Lobby lobby = lobbyService.removePlayer(code, username);
-        if (lobby == null) return;
+        Lobby lobby;
+        try {
+            lobby = lobbyService.removePlayer(code, playerId);
+        } catch (PlayerNotInLobbyException ignored) {
+            return;
+        }
 
         if (lobby.isStarted()) {
             expectedPlayers.computeIfPresent(code, (k, v) -> Math.max(0, v - 1));
@@ -108,7 +104,7 @@ public class LobbyWebSocketHandler extends TextWebSocketHandler {
     }
 
     public void broadcastGameStart(String code, String map) {
-        List<String> players = getConnectedUsernames(code);
+        Map<String, String> players = getConnectedPlayers(code);
         expectedPlayers.put(code, players.size());
 
         Map<String, Object> msg = new HashMap<>();
@@ -134,16 +130,16 @@ public class LobbyWebSocketHandler extends TextWebSocketHandler {
     private void handleStateUpdate(String code, JsonNode root, WebSocketSession sender) {
         Map<String, Object> msg = new HashMap<>();
         msg.put("type", "STATE_UPDATE");
-        msg.put("username", root.get("username").asText());
+        msg.put("playerId", root.get("playerId").asText());
         msg.put("state", root.get("state"));
         broadcastMsg(code, msg, sender);
     }
 
     private void handleGameEnd(String code, JsonNode root, WebSocketSession session) {
-        String username = (String) session.getAttributes().get("username");
+        String playerId = getPlayer(session).getId();
 
         gameEndData.computeIfAbsent(code, k -> new ConcurrentHashMap<>())
-                .put(username, root.get("stats"));
+                .put(playerId, root.get("stats"));
 
         int received = gameEndData.get(code).size();
         int expected = expectedPlayers.getOrDefault(code, 0);
@@ -172,17 +168,22 @@ public class LobbyWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
+    private Player getPlayer(WebSocketSession session) {
+        return (Player) session.getAttributes().get("player");
+    }
+
     private String getLobbyCode(WebSocketSession session) {
         return (String) session.getAttributes().get("code");
     }
 
-    private List<String> getConnectedUsernames(String code) {
+    private Map<String, String> getConnectedPlayers(String code) {
         return sessions.getOrDefault(code, Set.of())
                 .stream()
-                .map(s -> (String) s.getAttributes().get("username"))
-                .filter(Objects::nonNull)
-                .distinct()
-                .toList();
+                .collect(Collectors.toMap(
+                        s -> getPlayer(s).getId(),
+                        s -> getPlayer(s).getUsername(),
+                        (a, b) -> a
+                ));
     }
 
     private void cleanupGameEndState(String code) {

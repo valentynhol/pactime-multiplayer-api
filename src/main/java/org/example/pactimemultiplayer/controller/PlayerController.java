@@ -1,6 +1,7 @@
 package org.example.pactimemultiplayer.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.pactimemultiplayer.dto.ChangeUsernameDto;
 import org.example.pactimemultiplayer.dto.PlayerDto;
 import org.example.pactimemultiplayer.entity.Player;
 import org.example.pactimemultiplayer.security.Authenticated;
@@ -19,10 +20,10 @@ public class PlayerController {
         return PlayerDto.from(player);
     }
 
-    @PutMapping
+    @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void updatePlayer(@RequestBody PlayerDto dto, @Authenticated Player player) {
-        playerService.updatePlayer(dto, player);
+    void updatePlayer(@RequestBody ChangeUsernameDto dto, @Authenticated Player player) {
+        playerService.updatePlayerUsername(dto, player);
     }
 
     @DeleteMapping

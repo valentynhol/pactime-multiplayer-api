@@ -2,10 +2,9 @@ package org.example.pactimemultiplayer.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.example.pactimemultiplayer.dto.PlayerDto;
+import org.example.pactimemultiplayer.dto.ChangeUsernameDto;
 import org.example.pactimemultiplayer.entity.Player;
 import org.example.pactimemultiplayer.repository.PlayerRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,13 +18,7 @@ public class PlayerService {
                 .orElseGet(() -> playerRepository.save(new Player(id, username, email)));
     }
 
-    public Player getCurrentPlayer() {
-        return (Player) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-    }
-
-    public void updatePlayer(PlayerDto playerDto, Player player) {
-        player.setEmail(playerDto.getEmail());
+    public void updatePlayerUsername(ChangeUsernameDto playerDto, Player player) {
         player.setUsername(playerDto.getUsername());
 
         playerRepository.save(player);

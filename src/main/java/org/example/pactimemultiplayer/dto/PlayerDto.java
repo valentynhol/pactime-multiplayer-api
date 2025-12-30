@@ -9,11 +9,13 @@ import org.example.pactimemultiplayer.entity.Player;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlayerDto {
+    private String id;
     private String username;
     private String email;
 
     public static PlayerDto from(Player player) {
         return new PlayerDto(
+                player.getId(),
                 player.getUsername(),
                 player.getEmail()
         );
