@@ -3,6 +3,7 @@ package org.example.pactimemultiplayer.security;
 import lombok.NonNull;
 import org.example.pactimemultiplayer.entity.Player;
 import org.springframework.core.MethodParameter;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,9 @@ public class AuthenticatedPlayerArgumentResolver
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (authentication == null
+                || !authentication.isAuthenticated()
+                || authentication instanceof AnonymousAuthenticationToken) {
             throw new ResponseStatusException(
                     UNAUTHORIZED, "Not authenticated"
             );

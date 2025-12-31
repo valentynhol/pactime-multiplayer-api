@@ -1,6 +1,10 @@
 package org.example.pactimemultiplayer.controller;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.pactimemultiplayer.entity.Player;
@@ -16,6 +20,7 @@ import java.net.URLEncoder;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+@Tag(name = "Authentication", description = "OAuth2 authentication and JWT issuing")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -31,29 +36,19 @@ public class AuthController {
     @Value("${config.api-url}")
     private String apiUrl;
 
-//    @PostMapping("/google")
-//    public AuthResponse authenticate(@RequestBody GoogleTokenDto dto) {
-//        try {
-//            GoogleIdToken idToken = googleVerifier.verify(dto.idToken());
-//
-//            if (idToken == null) {
-//                throw new ResponseStatusException(
-//                        HttpStatus.UNAUTHORIZED, "Invalid Google token"
-//                );
-//            }
-//
-//            Player player = authenticateFromPayload(idToken.getPayload());
-//            String jwt = jwtService.createToken(player);
-//
-//            return new AuthResponse(jwt);
-//
-//        } catch (Exception e) {
-//            throw new ResponseStatusException(
-//                    HttpStatus.UNAUTHORIZED, "Google authentication failed", e
-//            );
-//        }
-//    }
-
+    @Operation(
+            summary = "Redirect to Google OAuth",
+            description = """
+                    Starts Google OAuth2 login flow.
+                    Redirects the user to Google consent screen.
+                    
+                    `port` and `state_nonce` are returned unchanged after authentication.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "302", description = "Redirect to Google OAuth"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
     @GetMapping("/google/login")
     public void redirectToGoogle(
             @RequestParam("port") int port,
@@ -74,6 +69,18 @@ public class AuthController {
         response.sendRedirect(googleAuthUrl);
     }
 
+    @Operation(
+            summary = "Google OAuth callback",
+            description = """
+                    Handles Google OAuth callback.
+                    Exchanges authorization code for Google ID token,
+                    creates or fetches Player, and issues JWT.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "302", description = "Redirect with JWT token"),
+            @ApiResponse(responseCode = "401", description = "Invalid Google token")
+    })
     @GetMapping("/google/callback")
     public void handleGoogleCallback(
             @RequestParam("code") String code,

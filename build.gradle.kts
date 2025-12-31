@@ -31,6 +31,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
+    implementation("org.apache.commons:commons-lang3:3.18.0")
     implementation("com.google.api-client:google-api-client:2.6.0")
     implementation("com.google.api-client:google-api-client-gson:2.6.0")
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
