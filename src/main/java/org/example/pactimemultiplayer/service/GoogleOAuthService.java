@@ -12,13 +12,13 @@ import java.io.IOException;
 
 @Service
 public class GoogleOAuthService {
-    @Value("${security.google.client-id}")
+    @Value("${security.google.client.id}")
     private String googleClientId;
 
-    @Value("${security.google.client-secret}")
+    @Value("${security.google.client.secret}")
     private String googleClientSecret;
 
-    @Value("${config.api-url}")
+    @Value("${config.api.url}")
     private String apiUrl;
 
     public GoogleIdToken getGoogleIdToken(String code)

@@ -14,13 +14,13 @@ SPRING_DATASOURCE_URL=jdbc:postgresql://url.example.com/db
 SPRING_DATASOURCE_USERNAME=admin
 SPRING_DATASOURCE_PASSWORD=admin123
 
-JWT_SECRET=<random_base64_secret>
+SECURITY_JWT_SECRET=<random_base64_secret>
+SECURITY_GOOGLE_CLIENT_ID=123456-abcdef123.apps.googleusercontent.com
+SECURITY_GOOGLE_CLIENT_SECRET=qwerty-123123qwerty
 
-API_URL=http://localhost:8080
-GOOGLE_CLIENT_ID=123456-abcdef123.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=qwerty-123123qwerty
+CONFIG_API_URL=http://localhost:8080
 ```
-`JWT_SECRET` may be generated using:
+`SECURITY_JWT_SECRET` may be generated using:
 ```shell
 openssl rand -base64 32
 ```
