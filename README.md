@@ -24,3 +24,21 @@ CONFIG_API_URL=http://localhost:8080
 ```shell
 openssl rand -base64 32
 ```
+
+### Running
+Java version used:
+```txt
+openjdk 21.0.9 2025-10-21 LTS
+OpenJDK Runtime Environment Temurin-21.0.9+10 (build 21.0.9+10-LTS)
+OpenJDK 64-Bit Server VM Temurin-21.0.9+10 (build 21.0.9+10-LTS, mixed mode, sharing)
+```
+
+Generating .jar:
+```shell
+./gradlew bootJar
+```
+
+Running from .jar:
+```shell
+export $(grep -v '^#' .env | xargs) && java -jar build/libs/pactime-multiplayer-api-0.0.1-SNAPSHOT.jar
+```
