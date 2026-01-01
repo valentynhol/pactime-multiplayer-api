@@ -2,13 +2,14 @@
 
 ## Enables multiplayer mode for pactime game: https://github.com/valentynhol/pactime
 
-### Docs can be accessed on `/` endpoint
+## General info
+Docs can be accessed on `/` endpoint
 
-### By default, starts on: `http://localhost:8080/`
+By default, starts on: `http://localhost:8080/`
 
-### SebSocket urls: `ws://localhost:8080/ws/lobbies/{code}`
+SebSocket urls: `ws://localhost:8080/ws/lobbies/{code}`
 
-### Example environment variables:
+## Example environment variables:
 ```dotenv
 SPRING_DATASOURCE_URL=jdbc:postgresql://url.example.com/db
 SPRING_DATASOURCE_USERNAME=admin
@@ -25,7 +26,7 @@ CONFIG_API_URL=http://localhost:8080
 openssl rand -base64 32
 ```
 
-### Running
+## Running
 Java version used:
 ```txt
 openjdk 21.0.9 2025-10-21 LTS
@@ -33,6 +34,7 @@ OpenJDK Runtime Environment Temurin-21.0.9+10 (build 21.0.9+10-LTS)
 OpenJDK 64-Bit Server VM Temurin-21.0.9+10 (build 21.0.9+10-LTS, mixed mode, sharing)
 ```
 
+### .jar:
 Generating .jar:
 ```shell
 ./gradlew bootJar
@@ -41,4 +43,14 @@ Generating .jar:
 Running from .jar:
 ```shell
 export $(grep -v '^#' .env | xargs) && java -jar build/libs/pactime-multiplayer-api-0.0.1-SNAPSHOT.jar
+```
+
+### Docker container:
+Build container:
+```shell
+docker build -t pactime-multiplayer-api .
+```
+Run:
+```shell
+docker run --env-file .env -p 8080:8080 -it --rm pactime-multiplayer-api
 ```
